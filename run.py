@@ -42,9 +42,10 @@ def train(data, params):
     pre_dev_acc = 0
     max_dev_acc = 0
     max_test_acc = 0
+
     for e in range(params["EPOCH"]):
         data["train_x"], data["train_y"] = shuffle(data["train_x"], data["train_y"])
-
+        epoch_loss = 0.0
         for i in range(0, len(data["train_x"]), params["BATCH_SIZE"]):
             batch_range = min(params["BATCH_SIZE"], len(data["train_x"]) - i)
 
@@ -64,9 +65,11 @@ def train(data, params):
             nn.utils.clip_grad_norm(parameters, max_norm=params["NORM_LIMIT"])
             optimizer.step()
 
+            epoch_loss += pred.shape[0]*loss.item()
+
         dev_acc = test(data, model, params, mode="dev")
         test_acc = test(data, model, params)
-        print("epoch:", e + 1, "/ dev_acc:", dev_acc, "/ test_acc:", test_acc)
+        print("epoch:", e + 1, "/ dev_acc:", dev_acc, "/ test_acc:", test_acc, "/ Train Loss:", epoch_loss/len(data["train_x"]))
 
         if params["EARLY_STOPPING"] and dev_acc <= pre_dev_acc:
             print("early stopping by dev_acc!")
