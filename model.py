@@ -2,6 +2,24 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
+def swish(input):
+    return input * torch.sigmoid(input)
+
+def mish(input):
+    return input * torch.tanh(F.softplus(input))
+
+class swish(nn.Module):
+    def __init__(self):
+        '''
+        Init method.
+        '''
+        super().__init__() # init the base class
+
+    def forward(self, input):
+        '''
+        Forward pass of the function.
+        '''
+        return swish(input) # simply apply already implemented swish
 
 class CNN(nn.Module):
     def __init__(self, **kwargs):
